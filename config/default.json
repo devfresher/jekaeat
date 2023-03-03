@@ -1,0 +1,13 @@
+{
+    "app": {
+        "name": "Jekaeat",
+        "host": "0.0.0.0",
+        "port": 5000
+    },
+    "db": {
+        "url": "${dbUrl}"
+    },
+    "jsonwebtoken":  {
+        "privateKey": "${jwtPrivateKey}"
+    }
+}

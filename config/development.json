@@ -1,0 +1,8 @@
+{
+    "db": {
+        "url": "mongodb://localhost/jekaeat"
+    },
+    "jsonwebtoken":  {
+        "privateKey": "acb44d1b8522e96298f8ad80f001d1685bb14e2f77575e8cb73d3c58a6bf909c12648452f2d14a60fc3907fc518cb9a805ada623124a206bf488d28d39baa2a2"
+    }
+}
