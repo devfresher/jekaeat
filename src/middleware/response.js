@@ -30,7 +30,7 @@ class ResponseMiddleware {
 				code = defaultCode;
 				const error = {
 					code,
-					message: data.message || defaultMessage,
+					message: defaultMessage,
 				};
 				winston.error(error.message, data.exception);
 				return res.status(error.code).json({
