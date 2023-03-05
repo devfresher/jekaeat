@@ -31,7 +31,7 @@ export default class PaymentService {
         const requestBody = {
             email,
             authorization_code: authorizationCode,
-            amount: amount,
+            amount: amount * 100,
         }
         
         const response = await axios.post(paystackChargeUrl, requestBody, { headers: authHeader })
@@ -43,7 +43,7 @@ export default class PaymentService {
         const transaction = response.data.data
 
         // Check if transaction is successful and has the expected amount
-        if (transaction.status === 'success' && transaction.amount === amount) {
+        if (transaction.status === 'success' && transaction.amount === amount * 100) {
             return true
         }
 
