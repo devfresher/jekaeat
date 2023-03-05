@@ -6,18 +6,17 @@ const orderSchema = new mongoose.Schema({
     meals: [{
         mealId: { type: SchemaTypes.ObjectId, ref: 'Meal', required: true },
         quantity: { type: Number, required: true },
-        price: { type: Number, required: true }
+        price: { type: Number, required: true },
+        _id: false
     }],
     total: { type: Number, required: true },
     status: { type: String, enum: ['pending', 'completed', 'cancelled'], default: 'pending' },
-    paymentStatus: { type: String, enum: ['unpaid', 'pending', 'successful', 'failed'], default: 'unpaid' },
-    paymentMethod: { type: String, enum: ['card', 'cash'], default: 'card' },
-    paymentInfo: {
-        cardNumber: { type: String },
-        expirationDate: { type: String },
-        cvv: { type: String },
-        billingZipCode: { type: String }
-    }, 
+    payment: {
+        method: { type: String, enum: ['card', 'cash'], default: 'card' },
+        status: { type: String, enum: ['unpaid', 'pending', 'paid', 'failed'], default: 'unpaid' },
+        reference: { type: String },
+        _id: false
+    },
     deliveryInfo: {
         address: { type: String, required: true },
         nearestLandmark: { type: String },

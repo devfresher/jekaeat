@@ -1,41 +1,41 @@
 import winston from "winston";
 
 class ResponseMiddleware {
-	static response = (data, req, res, next) => {
+	static response = (info, req, res, next) => {
 		const defaultCode = 500;
 		const defaultMessage = "Something unexpected went wrong";
 
-		let code
-		switch (data.status) {
+		let code, message
+		switch (info.status) {
 			case "success":
-				code = this.isValidStatusCode(data.code) ? data.code : 200;
+				code = this.isValidStatusCode(info.code) ? info.code : 200;
+
 				return res.status(code).json({
-					status: data.status,
-					data: data.data,
-					message: data.message
+					status: info.status,
+					data: info.data,
+					message: info.message
 				});
 
 			case "error":
-				code = this.isValidStatusCode(data.code) ? data.code : defaultCode;
+				code = this.isValidStatusCode(info.code) ? info.code : defaultCode;
+				message = info.message || defaultMessage
+
+				if (code === 500) winston.error(message, info);
+
 				return res.status(code).json({
-					status: data.status,
-					error: {
-						code,
-						message: data.message || defaultMessage
-					}
+					status: info.status,
+					error: { code, message }
 				});
 
 			default:
-				console.log(data);
 				code = defaultCode;
-				const error = {
-					code,
-					message: defaultMessage,
-				};
-				winston.error(error.message, data.exception);
-				return res.status(error.code).json({
+				message = defaultMessage
+
+				winston.error(message, info);
+
+				return res.status(code).json({
 					status: "error",
-					error
+					error: { code, message }
 				});
 		}
 	}

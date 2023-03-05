@@ -39,8 +39,8 @@ export default class OrderController {
                     cardNumber: Joi.string().creditCard().required(),
                     expirationDate: Joi.string().pattern(/^\d{2}\/\d{2}$/).required(),
                     cvv: Joi.string().length(3).required(),
-                    billingZipCode: Joi.string().length(5).required()
-                }),
+                    billingZipCode: Joi.string().required()
+                }).required(),
                 otherwise: Joi.object().forbidden()
             }),
             deliveryInfo: Joi.object({

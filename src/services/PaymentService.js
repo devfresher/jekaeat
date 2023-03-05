@@ -1,56 +1,66 @@
-import axios from 'axios';
-import { config } from 'winston';
+import axios from 'axios'
+import config from 'config'
 
+const PAYSTACK_SECRET_KEY = config.get('paystack.secretKey')
+const paystackChargeUrl = 'https://api.paystack.co/charge'
+const paystackTokenizeUrl = 'https://api.paystack.co/charge/tokenize'
+const paystackVerifyUrl = 'https://api.paystack.co/transaction/verify'
+
+const authHeader = {
+    Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+    "Content-Type": "application/json"
+}
 export default class PaymentService {
 
-    static async #createChargeToken(cardNumber, expirationMonth, expirationYear, cvv) {
-        const response = await axios.post(
-            'https://api.paystack.co/charge/tokenize',
-            {
-                card: {
-                    number: cardNumber,
-                    cvv,
-                    expiry_month: expirationMonth,
-                    expiry_year: expirationYear,
-                },
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${config.get('paystack.secretKey')}`,
-                },
-            },
-        );
-        if (response.data.status === 'success') {
-            return response.data.data.authorization_code;
-        } else {
-            throw new Error(`Creating charge token failed: ${response.data.message}`);
+    static async createChargeToken(cardNumber, expirationMonth, expirationYear, cvv, email) {
+        const requestBody = {
+            email,
+            card: {
+                number: cardNumber,
+                cvv,
+                expiry_month: expirationMonth,
+                expiry_year: expirationYear,
+            }
         }
+        
+        const response = await axios.post(paystackTokenizeUrl, requestBody, { headers: authHeader })
+        return response.data.data.authorization_code
     }
 
-    static async #chargeToken(authorizationCode, amount) {
-        const response = await axios.post(
-            'https://api.paystack.co/charge',
-            {
-                authorization_code: authorizationCode,
-                amount: amount * 100,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${config.get('paystack.secretKey')}`,
-                },
-            },
-        );
-        if (response.data.status === 'success') {
-            return response.data.data.authorization_code;
-        } else {
-            throw new Error(`Payment failed: ${response.data.message}`);
+    static async chargeToken(authorizationCode, amount, email) {
+        const requestBody = {
+            email,
+            authorization_code: authorizationCode,
+            amount: amount,
         }
+        
+        const response = await axios.post(paystackChargeUrl, requestBody, { headers: authHeader })
+        return response.data.data
     }
 
-    static async processCardPayment(cardNumber, expirationMonth, expirationYear, cvv, amount) {
-        const authCode = this.#createChargeToken(cardNumber, expirationMonth, expirationYear, cvv)
-        const paymentResult = this.#chargeToken(authCode, amount)
+    static async verifyPayment(paymentRef, amount) {        
+        const response = await axios.post(`${paystackVerifyUrl}/${paymentRef}`, { headers: authHeader })
+        const transaction = response.data.data
 
-        return paymentResult
+        // Check if transaction is successful and has the expected amount
+        if (transaction.status === 'success' && transaction.amount === amount) {
+            return true
+        }
+
+        return false
+    }
+
+    static async processCardPayment(cardInfo, user, amount) {
+        const { cardNumber, expirationMonth, expirationYear, cvv } = cardInfo
+        const { email } = user
+
+        const authCode = await this.createChargeToken(cardNumber, expirationMonth, expirationYear, cvv, email)
+        const response = await this.chargeToken(authCode, amount, email)
+
+        if (response.status === 'success') {
+            return response
+        } else {
+            throw { status: "error", code: 500, msg: response.data.message }
+        }
     }
 }
