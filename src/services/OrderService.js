@@ -14,11 +14,13 @@ export default class OrderService {
         // Process payment
         let paymentResult = null;
         if (paymentMethod === "card") {
+            const [expiryMonth, expiryYear] = paymentInfo.expirationDate.split("/");
+            
             paymentResult = await PaymentService.processCardPayment(
                 paymentInfo.cardNumber,
-                paymentInfo.expirationDate,
+                expiryMonth,
+                expiryYear,
                 paymentInfo.cvv,
-                paymentInfo.billingZipCode,
                 total
             );
         }

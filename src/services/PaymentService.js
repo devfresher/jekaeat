@@ -16,7 +16,7 @@ export default class PaymentService {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${config.get(PAYSTACK_SECRET_KEY)}`,
+                    Authorization: `Bearer ${config.get('paystack.secretKey')}`,
                 },
             },
         );
@@ -27,16 +27,16 @@ export default class PaymentService {
         }
     }
 
-    static async chargeToken(authorizationCode, amount) {
+    static async #chargeToken(authorizationCode, amount) {
         const response = await axios.post(
             'https://api.paystack.co/charge',
             {
                 authorization_code: authorizationCode,
-                amount: amount * 100, // Paystack amount is in kobo (1 NGN = 100 kobo)
+                amount: amount * 100,
             },
             {
                 headers: {
-                    Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+                    Authorization: `Bearer ${config.get('paystack.secretKey')}`,
                 },
             },
         );
@@ -46,8 +46,11 @@ export default class PaymentService {
             throw new Error(`Payment failed: ${response.data.message}`);
         }
     }
+
     static async processCardPayment(cardNumber, expirationMonth, expirationYear, cvv, amount) {
         const authCode = this.#createChargeToken(cardNumber, expirationMonth, expirationYear, cvv)
-        charge
+        const paymentResult = this.#chargeToken(authCode, amount)
+
+        return paymentResult
     }
 }
