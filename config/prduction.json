@@ -1,0 +1,11 @@
+{
+    "db": {
+        "url": "${dbUrl}"
+    },
+    "jsonwebtoken":  {
+        "privateKey": "${jwtPrivateKey}"
+    },
+    "paystack": {
+        "secretKey": "${paystackSecret}"
+    }
+}
