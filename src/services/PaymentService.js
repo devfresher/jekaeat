@@ -14,7 +14,7 @@ export default class PaymentService {
 
     static async createChargeToken(cardNumber, expirationMonth, expirationYear, cvv, email) {
         console.log(process.env.NODE_ENV);
-        console.log(config.get('db.url'));
+        console.log(config.get('paystack.secretKey'));
         const requestBody = {
             email,
             card: {
