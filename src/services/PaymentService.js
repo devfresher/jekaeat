@@ -14,7 +14,7 @@ export default class PaymentService {
 
     static async createChargeToken(cardNumber, expirationMonth, expirationYear, cvv, email) {
         console.log(process.env.NODE_ENV);
-        console.log(config.get('dbUrl'));
+        console.log(config.get('dv.url'));
         const requestBody = {
             email,
             card: {
