@@ -1,6 +1,6 @@
 import winston from "winston";
 
-class ResponseMiddleware {
+export default class ResponseMiddleware {
 	static response = (info, req, res, next) => {
 		const defaultCode = 500;
 		const defaultMessage = "Something unexpected went wrong";
@@ -44,5 +44,3 @@ class ResponseMiddleware {
 		return code >= 100 && code <= 599;
 	}
 }
-
-export default ResponseMiddleware

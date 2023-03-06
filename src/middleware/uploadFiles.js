@@ -10,28 +10,30 @@ export default class FileUploadMiddleware {
 
     static #maxFileSize = 60 * 1024 * 1024
 
-    static createMulter = (fieldName, formats, destination) =>  multer({
-        storage: multer.diskStorage({
-            destination: (req, file, cb) => {
-                cb(null, destination)
+    static createMulter (fieldName, formats, destination) {
+        return multer({
+            storage: multer.diskStorage({
+                destination: (req, file, cb) => {
+                    cb(null, destination)
+                },
+                filename: (req, file, cb) => {
+                    cb(null, file.originalname)
+                }
+            }),
+            fileFilter: (req, file, cb) => {
+                const ext = path.extname(file.originalname)
+                if (!formats.includes(ext)) {
+                    req.fileValidationError = `Unsupported file format. Expecting ${formats.join(", ")} file(s) only`
+                    cb(null, false)
+                } else {
+                    cb(null, true)
+                }
             },
-            filename: (req, file, cb) => {
-                cb(null, file.originalname)
-            }
-        }),
-        fileFilter: (req, file, cb) => {
-            const ext = path.extname(file.originalname)
-            if (!formats.includes(ext)) {
-                req.fileValidationError = `Unsupported file format. Expecting ${formats.join(", ")} file(s) only`
-                cb(null, false)
-            } else {
-                cb(null, true)
-            }
-        },
-        limits: { fileSize: this.#maxFileSize, files: 1 }
-    }).single(fieldName)
+            limits: { fileSize: this.#maxFileSize, files: 1 }
+        }).single(fieldName)
+    }
 
-    static #uploadFile = (fieldName, format, destination = "tempUploads") => {
+    static #uploadFile (fieldName, format, destination = "tempUploads") {
         const absDestination = path.resolve(process.cwd(), destination)
         Utils.createDestination(absDestination)
     
