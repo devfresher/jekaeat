@@ -1,8 +1,0 @@
-{
-    "db": {
-        "url": "dbUrl"
-    },
-    "jsonwebtoken":  {
-        "privateKey": "jwtPrivateKey"
-    }
-}
