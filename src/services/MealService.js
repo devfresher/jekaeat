@@ -1,4 +1,5 @@
 import Meal from "../models/Meal.js"
+import FileService from "./FileService.js"
 import VendorService from "./VendorService.js"
 
 
@@ -17,14 +18,14 @@ export default class MealService {
         let meal = await this.getOne({ name: mealData.name, vendor: vendorId })
         if (meal) throw { status: "error", code: 409, message: `Meal already exist for ${vendor.restaurantName}` }
 
-        const {name, description, category, type, unitPrice, image} = mealData
+        const {name, description, category, type, unitPrice, file} = mealData
+        const mealImage = await FileService.uploadToCloudinary(file, 'meals')
+
         meal = new Meal({
             name, description, category, 
             type, unitPrice,  
             vendor: vendorId,
-            image: {
-                url: image
-            }
+            image: { url: mealImage.secure_url, imageId: mealImage.public_id }
         })
 
         await meal.save()

@@ -1,6 +1,6 @@
 import multer from "multer"
 import path from "path"
-import Utils from "../utils/Utils"
+import Utils from "../utils/Utils.js"
 
 export default class FileUploadMiddleware {
     static #supportedFormats = {
@@ -10,7 +10,7 @@ export default class FileUploadMiddleware {
 
     static #maxFileSize = 60 * 1024 * 1024
 
-    static createMulter (fieldName, formats, destination) {
+    static #createMulter (fieldName, formats, destination) {
         return multer({
             storage: multer.diskStorage({
                 destination: (req, file, cb) => {
@@ -37,7 +37,7 @@ export default class FileUploadMiddleware {
         const absDestination = path.resolve(process.cwd(), destination)
         Utils.createDestination(absDestination)
     
-        const upload = createMulter(fieldName, this.#supportedFormats[format], destination)
+        const upload = this.#createMulter(fieldName, this.#supportedFormats[format], destination)
     
         return (req, res, next) => {
             upload(req, res, err => {

@@ -5,8 +5,12 @@ import MealService from "../services/MealService.js";
 
 export default class MealController {
     static async create(req, res, next) {
+        if (!req.file) next({status: "error", code: 400, message: "Upload a meal image"})
         
-        const newMeal = await MealService.create(req.user._id, req.body);
+        const mealData = req.body
+        mealData.file = req.file
+
+        const newMeal = await MealService.create(req.user._id, mealData);
         return next({ status: "success", data: newMeal });
     }
 
@@ -34,7 +38,7 @@ export default class MealController {
                     'any.only': `Type must be one of ${mealTypes.join(', ')}`,
                     'any.required': 'Type is required for food stack category'
                 }),
-                otherwise: Joi.string().valid('').allow(null).messages({
+                otherwise: Joi.string().optional().messages({
                     'string.base': 'Type must be a string'
                 })
             }),
@@ -42,10 +46,6 @@ export default class MealController {
                 'number.base': 'Unit price must be a number',
                 'number.empty': 'Unit price cannot be empty',
                 'any.required': 'Unit price is required'
-            }),
-            image: Joi.string().uri({ scheme: ['http', 'https'] }).required().messages({
-                'string.uri': 'Image must be a valid URL',
-                'any.required': 'Image is required'
             })
         });
     
