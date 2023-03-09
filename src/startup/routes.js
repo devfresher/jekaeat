@@ -5,6 +5,7 @@ import helmet from 'helmet'
 import authRouter from '../routes/auth.js'
 import mealRouter from '../routes/meal.js'
 import orderRouter from '../routes/order.js'
+import userRouter from '../routes/user.js'
 import webhookRouter from '../routes/webhook.js'
 
 
@@ -17,8 +18,9 @@ const routeApp = function (app) {
     app.use(helmet())
 
     app.use('/api/auth', authRouter)
-    app.use('/api/meal', mealRouter)
-    app.use('/api/order', orderRouter)
+    app.use('/api/meals', mealRouter)
+    app.use('/api/orders', orderRouter)
+    app.use('/api/users', userRouter)
     app.use('/api/webhook', webhookRouter)
 
     app.use(ResponseMiddleware.response)

@@ -1,15 +1,13 @@
-import config from "config"
 import Utils from "../utils/Utils.js"
+import config, { env } from "../utils/config.js"
 import OrderService from "../services/OrderService.js"
-
-const PAYSTACK_SECRET_KEY = config.get("paystack.secretKey")
 
 export default class WebhookController {
     static async paystack(req, res, next) {
         const header = req.headers['x-paystack-signature']
         const payload = JSON.stringify(req.body)
 
-        if (Utils.isValidSignature(header, payload, PAYSTACK_SECRET_KEY)) {
+        if (Utils.isValidSignature(header, payload, config[env].paystack.secretKey)) {
             const event = req.body.event
             const data = req.body.data
 

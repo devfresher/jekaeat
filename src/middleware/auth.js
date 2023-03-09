@@ -1,5 +1,5 @@
+import config, { env } from "../utils/config.js"
 import jwt from 'jsonwebtoken';
-import config from 'config';
 import UserService from '../services/UserService.js';
 
 export default class AuthMiddleware {
@@ -15,7 +15,7 @@ export default class AuthMiddleware {
                 });
             }
     
-            const decodedToken = jwt.verify(token, config.get('jsonwebtoken.privateKey'));
+            const decodedToken = jwt.verify(token, config[env].jwt.privateKey);
             const user = await UserService.getOne({_id: decodedToken._id});
             if (!user) {
                 return next({

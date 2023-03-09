@@ -21,6 +21,25 @@ export default class OrderController {
         return next({ status: "success", data: newOrder });
     }
 
+    static async getAllByVendorId(req, res, next) {
+        const vendor = await VendorService.getOne({ _id: req.params.vendorId })
+        if (!vendor) next({ status: "error", code: 500, message: "Invalid vendor" })
+
+        const orders = await OrderService.getMany({ vendor: vendor._id }, req.query)
+        next({ status: "success", data: orders })
+    }
+
+    static async getTotalTransactionAmountByVendorId(req, res, next) {
+        const vendor = await VendorService.getOne({ _id: req.params.vendorId })
+        if (!vendor) next({ status: "error", code: 500, message: "Invalid vendor" })
+
+        let filterQuery = { vendor: vendor._id }
+        if (req.query.status) filterQuery.status = req.query.status
+
+        const total = await OrderService.sumTransactions(filterQuery)
+        next({ status: "success", data: total })
+    }
+
 
     static validateOrder(order) {
         const schema = Joi.object({

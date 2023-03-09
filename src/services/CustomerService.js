@@ -13,7 +13,11 @@ export default class CustomerService extends UserService {
             email: userData.email,
             password: await this.hashPassword(userData.password),
             phoneNumber: userData.phoneNumber,
-            address: userData.address
+            deliveryAddress: {
+                address: userData.address,
+                contactName: userData.fullName,
+                contactPhone: userData.phoneNumber
+            }
         })
 
         await newCustomer.save()

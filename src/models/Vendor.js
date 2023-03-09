@@ -2,11 +2,24 @@ import { mongoose } from 'mongoose';
 import User from './User.js';
 
 const vendorSchema = new mongoose.Schema({
-    businessName: {
-        type: String
+    restaurantName: { type: String, required: true },
+    restaurantLocation: {
+        type: {
+            address: { type: String },
+            city: { type: String },
+            _id: false
+        }
     },
-    businessAddress: {
-        type: String
+    schedule: {
+        type: [{ day: String, openAt: String, closeAt: String }],
+    },
+    description: { type: String },
+    businessImage: { 
+        type: {
+            url: String, 
+            imageId: String, 
+            _id: false
+        }
     }
 })
 

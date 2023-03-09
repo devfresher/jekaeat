@@ -27,35 +27,54 @@ export default class AuthController {
     }
 
 
+    // Validations
     static validateSignUp(data) {
-        const { type } = data;
-        let validationFilter = {
-            fullName: Joi.string().required(),
-            email: Joi.string().email().required(),
-            password: Joi.string().min(6).required(),
-            phoneNumber: Joi.string().max(15),
-            type: Joi.string().required(),
-        };
+        const validationSchema = Joi.object({
+            fullName: Joi.string().required().trim().messages({
+                'string.empty': 'Full name is required',
+            }),
+            email: Joi.string().email().required().trim().messages({
+                'string.empty': 'Email is required',
+                'string.email': 'Please provide a valid email address',
+            }),
+            password: Joi.string().min(6).required().trim().messages({
+                'string.empty': 'Password is required',
+                'string.min': 'Password should be at least 6 characters long',
+            }),
+            phoneNumber: Joi.string().max(15).required().trim().messages({
+                'string.empty': 'Phone number is required',
+                'string.max': 'Phone number should not be longer than 15 characters',
+            }),
+            type: Joi.string().valid('Customer', 'Vendor').trim().required().messages({
+                'string.empty': 'Account type is required',
+                'any.only': 'Invalid account type',
+            }),
+            address: Joi.string().when('type', { is: 'Customer', then: Joi.required() }).trim().messages({
+                'string.empty': 'Address is required',
+            }),
+            restaurantName: Joi.string().when('type', { is: 'Vendor', then: Joi.required() }).trim().messages({
+                'string.empty': 'Restaurant name is required',
+            }),
+        });
 
-        if (type === "Customer") {
-            validationFilter.address = Joi.string();
-        } else if (type === "Vendor") {
-            validationFilter.businessName = Joi.string();
-            validationFilter.businessAddress = Joi.string();
-        }
-
-        const schema = Joi.object(validationFilter);
-        return schema.validate(data);
+        return validationSchema.validate(data, { abortEarly: false });
     }
 
     static validateSignIn(data) {
-        let validationFilter = {
-            email: Joi.string().email().required(),
-            password: Joi.string().required(),
-            type: Joi.string().required(),
-        };
+        const validationSchema = Joi.object({
+            email: Joi.string().email().required().trim().messages({
+                'string.email': 'Email must be a valid email address',
+                'string.empty': 'Email is required'
+            }),
+            password: Joi.string().required().trim().messages({
+                'string.empty': 'Password is required'
+            }),
+            type: Joi.string().required().valid('Customer', 'Vendor').trim().messages({
+                'string.empty': 'Account type is required',
+                'any.only': 'Invalid account type',
+            })
+        });
 
-        const schema = Joi.object(validationFilter);
-        return schema.validate(data);
+        return validationSchema.validate(data, { abortEarly: false });
     }
 }

@@ -2,8 +2,23 @@ import { mongoose } from 'mongoose';
 import User from './User.js';
 
 const customerSchema = new mongoose.Schema({
-    address: {
-        type: String
+    deliveryAddress: {
+        type: {
+            address: { type: String, required: true },
+            nearestLandmark: { type: String },
+            city: { type: String },
+            country: { type: String },
+            contactName: { type: String, required: true },
+            contactPhone: { type: String, required: true },
+            _id: false
+        },
+    },
+    profileImage: { 
+        type: {
+            url: String, 
+            imageId: String, 
+            _id: false
+        }
     }
 })
 

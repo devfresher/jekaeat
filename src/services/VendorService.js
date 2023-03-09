@@ -13,8 +13,7 @@ export default class VendorService extends UserService {
             email: userData.email,
             password: await this.hashPassword(userData.password),
             phoneNumber: userData.phoneNumber,
-            businessName: userData.businessName,
-            businessAddress: userData.businessAddress
+            restaurantName: userData.restaurantName,
         })
 
         await newVendor.save()

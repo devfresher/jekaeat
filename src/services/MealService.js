@@ -12,14 +12,19 @@ export default class MealService {
 
     static async create(vendorId, mealData) {
         const vendor = await VendorService.getOne({ _id: vendorId })
-        if (!vendor) throw { status: "error", code: 404, message: "Vendor does not exist" }
+        if (!vendor) throw { status: "error", code: 500, message: "Invalid vendor id " }
 
         let meal = await this.getOne({ name: mealData.name, vendor: vendorId })
-        if (meal) throw { status: "error", code: 409, message: `Meal already exist for ${vendor.businessName}` }
+        if (meal) throw { status: "error", code: 409, message: `Meal already exist for ${vendor.restaurantName}` }
 
+        const {name, description, category, type, unitPrice, image} = mealData
         meal = new Meal({
-            ...mealData,
-            vendor: vendorId
+            name, description, category, 
+            type, unitPrice,  
+            vendor: vendorId,
+            image: {
+                url: image
+            }
         })
 
         await meal.save()

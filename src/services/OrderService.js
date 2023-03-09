@@ -1,4 +1,5 @@
 import Order from "../models/Order.js";
+import Utils from "../utils/Utils.js";
 import CustomerService from "./CustomerService.js";
 import PaymentService from "./PaymentService.js";
 
@@ -8,6 +9,23 @@ export default class OrderService {
 
         if (!order) return false
         return order
+    }
+
+    static async getMany(filterQuery, pageFilter) {
+        if (!pageFilter || (!pageFilter.page && !pageFilter.limit)) 
+            return await Order.find(filterQuery)
+
+        pageFilter.customLabels = Utils.paginationLabel
+        return await Order.paginate(filterQuery, pageFilter)
+    }
+
+    static async sumTransactions(filterQuery) {
+        const result = await Order.aggregate([
+            { $match: filterQuery },
+            { $group: { _id: null, totalAmount: { $sum: "$total" } } }
+        ])
+        const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
+        return totalAmount
     }
 
     static async create(customerId, vendorId, meals, paymentMethod, paymentInfo, deliveryInfo) {

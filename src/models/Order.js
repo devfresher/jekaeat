@@ -1,4 +1,5 @@
 import { mongoose, SchemaTypes } from 'mongoose';
+import paginate from "mongoose-paginate-v2";
 
 const orderSchema = new mongoose.Schema({
     customer: { type: SchemaTypes.ObjectId, ref: 'Customer', required: true },
@@ -22,10 +23,12 @@ const orderSchema = new mongoose.Schema({
         nearestLandmark: { type: String },
         deliveryInstructions: { type: String },
         contactName: { type: String, required: true },
-        contactPhone: { type: String, required: true }
+        contactPhone: { type: String, required: true },
+        _id: false
     },
     createdAt: { type: Date, default: Date.now }
 })
 
+orderSchema.plugin(paginate)
 const Order = mongoose.model('Order', orderSchema)
 export default Order

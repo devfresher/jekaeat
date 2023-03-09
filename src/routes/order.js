@@ -11,5 +11,15 @@ router.post('/new',
     ValidationMiddleware.validateRequest(OrderController.validateOrder),
     OrderController.create
 )
+router.get('/vendor/:vendorId', 
+    AuthMiddleware.requireUserType("Vendor"), 
+    ValidationMiddleware.validateObjectIds('vendorId'),
+    OrderController.getAllByVendorId
+)
+router.get('/vendor/:vendorId/total-transaction-amount', 
+    AuthMiddleware.requireUserType("Vendor"), 
+    ValidationMiddleware.validateObjectIds('vendorId'),
+    OrderController.getTotalTransactionAmountByVendorId
+)
 
 export default router

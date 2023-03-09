@@ -1,5 +1,8 @@
 import { mongoose, SchemaTypes } from 'mongoose';
 
+export const mealCategories = ["Meal pack", "Food stack"]
+export const mealTypes = ["Main meal", "Side meal"]
+
 const mealSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -10,15 +13,23 @@ const mealSchema = new mongoose.Schema({
     },
     vendor: {
         type: SchemaTypes.ObjectId,
-        ref: 'Vendor'
+        ref: 'Vendor',
+        required: true,
     },
     category: {
-        type: SchemaTypes.ObjectId,
-        ref: 'Category'
+        type: String,
+        enum: mealCategories,
+        required: true
     },
-    isSideMeal: {
-        type: Boolean,
-        default: false
+    type: {
+        type: String,
+        enum: mealTypes,
+        validate: {
+            validator: function (value) {
+                return this.category !== "Food stack" || !!value;
+            },
+            message: "Type field is required for Food Stack meals"
+        }
     },
     isAvailable:{
         type: Boolean,
@@ -27,6 +38,13 @@ const mealSchema = new mongoose.Schema({
     unitPrice: {
         type: Number,
     },
+    image: {
+        type: {
+            url: String, 
+            imageId: String, 
+            _id: false
+        }
+    }
 })
 
 const Meal = mongoose.model('Meal', mealSchema)

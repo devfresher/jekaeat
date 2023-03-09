@@ -1,20 +1,17 @@
 import axios from 'axios'
-import config from 'config'
+import config, { env } from '../utils/config.js'
 
-const PAYSTACK_SECRET_KEY = config.get('paystack.secretKey')
 const paystackChargeUrl = 'https://api.paystack.co/charge'
 const paystackTokenizeUrl = 'https://api.paystack.co/charge/tokenize'
 const paystackVerifyUrl = 'https://api.paystack.co/transaction/verify'
 
 const authHeader = {
-    Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+    Authorization: `Bearer ${config[env].paystack.secretKey}`,
     "Content-Type": "application/json"
 }
 export default class PaymentService {
 
     static async createChargeToken(cardNumber, expirationMonth, expirationYear, cvv, email) {
-        console.log(process.env.NODE_ENV);
-        console.log(config.get('paystack.secretKey'));
         const requestBody = {
             email,
             card: {

@@ -1,13 +1,15 @@
-import config from 'config'
 import mongoose from 'mongoose'
 import winston from 'winston'
+import config, { env } from '../utils/config.js';
 
-const { name, host, port } =  config.get('app')
+const name = process.env.APP_NAME
+const host = process.env.HOST || "0.0.0.0";
+const port = process.env.PORT || 5000;
 
 export default async (app) => {
     try {
         mongoose.set('strictQuery', false)
-        await mongoose.connect(config.get('db.url'))
+        mongoose.connect(config[env].db.url)
         winston.info(`${name} is connected to DB`)
 
         app.listen(port, host, () => {
