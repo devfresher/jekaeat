@@ -13,7 +13,7 @@ const orderSchema = new mongoose.Schema({
     total: { type: Number, required: true },
     status: { type: String, enum: ['pending', 'completed', 'cancelled'], default: 'pending' },
     payment: {
-        method: { type: String, enum: ['card', 'cash'], default: 'card' },
+        method: { type: String, enum: ['online', 'delivery'], default: 'online' },
         status: { type: String, enum: ['unpaid', 'pending', 'paid', 'failed'], default: 'unpaid' },
         reference: { type: String },
         _id: false

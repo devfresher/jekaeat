@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import User from "../models/User.js"
 import config, { env } from "../utils/config.js"
+import Utils from "../utils/Utils.js"
 
 export default class UserService {
     static model = User
@@ -11,6 +12,14 @@ export default class UserService {
 
         if (!user) return false
         return user
+    }
+
+    static async getMany (filterQuery, pageFilter) {
+        if(!pageFilter || (!pageFilter.page && !pageFilter.limit))
+            return await this.model.find(filterQuery)
+        
+        pageFilter.customLabels = Utils.paginationLabel
+        return await this.paginate(filterQuery, pageFilter)
     }
     
     static async updateUserPassword (userId, currentPassword, newPassword) {

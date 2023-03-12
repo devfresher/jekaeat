@@ -1,4 +1,5 @@
 import Meal from "../models/Meal.js"
+import Utils from "../utils/Utils.js"
 import FileService from "./FileService.js"
 import VendorService from "./VendorService.js"
 
@@ -9,6 +10,14 @@ export default class MealService {
 
         if (!meal) return false
         return meal
+    }
+
+    static async getMany(filterQuery, pageFilter) {
+        if (!pageFilter || (!pageFilter.page && !pageFilter.limit)) 
+            return await Meal.find(filterQuery)
+
+        pageFilter.customLabels = Utils.paginationLabel
+        return await Meal.paginate(filterQuery, pageFilter)
     }
 
     static async create(vendorId, mealData) {

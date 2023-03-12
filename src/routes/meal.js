@@ -8,10 +8,14 @@ import FileUploadMiddleware from "../middleware/uploadFiles.js"
 const router = Router()
 
 router.post('/new', 
-    AuthMiddleware.requireUserType("Vendor"), 
+    AuthMiddleware.authenticateUserType("Vendor"), 
     FileUploadMiddleware.uploadSingleImage("mealImage"),
     ValidationMiddleware.validateRequest(MealController.validateNewMeal),
     MealController.create
 )
 
+router.get('/me', 
+    AuthMiddleware.authenticateUserType("Vendor"), 
+    MealController.myMeals
+)
 export default router

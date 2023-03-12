@@ -7,19 +7,27 @@ import ValidationMiddleware from "../middleware/validate.js"
 const router = Router()
 
 router.post('/new', 
-    AuthMiddleware.requireUserType("Customer"), 
+    AuthMiddleware.authenticateUserType("Customer"), 
     ValidationMiddleware.validateRequest(OrderController.validateOrder),
     OrderController.create
 )
-router.get('/vendor/:vendorId', 
-    AuthMiddleware.requireUserType("Vendor"), 
-    ValidationMiddleware.validateObjectIds('vendorId'),
-    OrderController.getAllByVendorId
+router.get('/customer/me', 
+    AuthMiddleware.authenticateUserType("Customer"), 
+    OrderController.myOrders
 )
-router.get('/vendor/:vendorId/total-transaction-amount', 
-    AuthMiddleware.requireUserType("Vendor"), 
-    ValidationMiddleware.validateObjectIds('vendorId'),
-    OrderController.getTotalTransactionAmountByVendorId
+router.put('/verify-payment-status', 
+    AuthMiddleware.authenticateUserType("Customer"), 
+    ValidationMiddleware.validateRequest(OrderController.validateVerifyPaymentStatus),
+    OrderController.verifyPaymentStatus
+)
+
+router.get('/vendor/me', 
+    AuthMiddleware.authenticateUserType("Vendor"), 
+    OrderController.myOrders
+)
+router.get('/vendor/me/total', 
+    AuthMiddleware.authenticateUserType("Vendor"), 
+    OrderController.myTotalOrders
 )
 
 export default router

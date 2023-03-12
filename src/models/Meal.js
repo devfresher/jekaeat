@@ -1,4 +1,5 @@
 import { mongoose, SchemaTypes } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 
 export const mealCategories = ["Meal pack", "Food stack"]
 export const mealTypes = ["Main meal", "Side meal"]
@@ -31,7 +32,7 @@ const mealSchema = new mongoose.Schema({
             message: "Type field is required for Food Stack meals"
         }
     },
-    isAvailable:{
+    isAvailable: {
         type: Boolean,
         default: true
     },
@@ -40,12 +41,13 @@ const mealSchema = new mongoose.Schema({
     },
     image: {
         type: {
-            url: String, 
-            imageId: String, 
+            url: String,
+            imageId: String,
             _id: false
         }
     }
 })
 
+mealSchema.plugin(paginate)
 const Meal = mongoose.model('Meal', mealSchema)
 export default Meal

@@ -1,5 +1,6 @@
 import { mongoose } from 'mongoose';
 import User from './User.js';
+import paginate from 'mongoose-paginate-v2'
 
 const customerSchema = new mongoose.Schema({
     deliveryAddress: {
@@ -22,5 +23,6 @@ const customerSchema = new mongoose.Schema({
     }
 })
 
+customerSchema.plugin(paginate)
 const Customer = User.discriminator('Customer', customerSchema)
 export default Customer
