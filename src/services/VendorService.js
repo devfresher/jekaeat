@@ -7,7 +7,7 @@ export default class VendorService extends UserService {
 
     static async create(userData) {
         const user = await UserService.getOne({ email: userData.email })
-        if (user) throw { status: "error", code: 409, message: "Email already used." }
+        if (user) throw { status: "error", code: 409, message: "Email already taken." }
 
         let newVendor = new Vendor({
             fullName: userData.fullName,
@@ -31,16 +31,16 @@ export default class VendorService extends UserService {
         if (vendor.settlementAccount?.subAccountCode) {
             subAccount = await PaymentService.updateSubAccount(
                 vendor.settlementAccount.subAccountCode,
-                vendor.restaurantName || accountName, 
-                bankCode, 
+                vendor.restaurantName || accountName,
+                bankCode,
                 accountNumber
             )
         } else {
             subAccount = await PaymentService.createSubAccount(
-                vendor.restaurantName || accountName, 
-                bankCode, 
-                accountNumber, 
-                17, 
+                vendor.restaurantName || accountName,
+                bankCode,
+                accountNumber,
+                17,
                 vendor.email
             )
         }
@@ -56,8 +56,8 @@ export default class VendorService extends UserService {
     }
 
     static async setFeatured(vendorId) {
-        const vendor = await VendorService.getOne({_id: vendorId})
-        if (!vendor) return next({status: "error", code: 404, message: "Vendor not found"})
+        const vendor = await VendorService.getOne({ _id: vendorId })
+        if (!vendor) return next({ status: "error", code: 404, message: "Vendor not found" })
 
         vendor.featured = true
         await vendor.save()

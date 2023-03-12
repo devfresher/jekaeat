@@ -84,7 +84,7 @@ export default class OrderService {
         if (order.status === newStatus) return
 
         if (order.status === 'paid') {
-            const verified = await PaymentService.verifyPayment(paymentRef)
+            const verified = await paystack.transaction.verify(paymentRef)
             if (!verified) {
                 throw { status: "error", code: 402, message: "Payment not successful" }
             }
