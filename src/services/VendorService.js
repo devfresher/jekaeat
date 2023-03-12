@@ -7,7 +7,7 @@ export default class VendorService extends UserService {
 
     static async create(userData) {
         const user = await UserService.getOne({ email: userData.email })
-        if (user) throw { status: "error", code: 409, message: "Email already taken." }
+        if (user) throw { status: "error", code: 409, message: "Email address already taken." }
 
         let newVendor = new Vendor({
             fullName: userData.fullName,

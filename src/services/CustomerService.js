@@ -6,7 +6,7 @@ export default class CustomerService extends UserService {
 
     static async create(userData) {
         const user = await UserService.getOne({ email: userData.email })
-        if (user) throw { status: "error", code: 409, message: "User already taken" }
+        if (user) throw { status: "error", code: 409, message: "Email address already taken" }
 
         let newCustomer = new Customer({
             fullName: userData.fullName,
